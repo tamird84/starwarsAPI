@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SWAPI exercise</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&display=swap" rel="stylesheet">
+    <style>
+        body{
+            background-image: url(space.png);
+        }
+        .starwars{
+            font-size: 40px;
+            text-shadow: 3px 5px 2px white;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 10px;
+            color: brown;
+            font-family: 'Russo One', sans-serif;
+        }
+        .categories {
+            cursor: pointer;
+            min-width: 40px;
+            max-width: 260px;
+            color: blue;
+        }
+
+        .wrap_btns {
+            text-align: center;
+        }
+
+        button {
+            margin: 0 20px;
+            width: 150px;
+            height: 30px;
+        }
+
+        #results_wrap {
+            display: inline-block;
+            width: 300px;
+            margin: 15px;
+            margin-left: 17%;
+            border: 1px solid black;
+            padding: 10px;
+            line-height: 30px;
+            background-color: rgba(240, 255, 255, 0.614);
+            text-shadow: 1px 2px 1px rgb(248, 244, 244);
+            font-size: larger;
+        }
+
+        #extended {
+            display: inline-block;
+            width:400px;
+            min-height: 200px;
+            border: 1px solid black;
+            padding: 10px;
+            margin: 15px;
+            position: absolute;
+            line-height: 30px;
+            background-color: rgba(240, 255, 255, 0.614);
+            font-size: larger;
+        }
+    </style>
+</head>
+<body>
+    <div class="starwars">STAR WARS Encyclopedia</div>
+    <div class='wrap_btns'>
+        <button onclick="fetch_species()">Species</button>
+        <button onclick="fetch_starships()">Starships</button>
+        <button onclick="fetch_films()">Films</button> <br>
+    </div>
+    <div id="results_wrap">
+        <div>those are the <span id="btn_blank">______</span> in all the Star Wars movies:</div>
+    </div> 
+
+    <div id="extended"></div>
+
+<script>
+
+const btn_blank = document.getElementById('btn_blank');
+const endpoint_species = 'https://swapi.dev/api/species';
+const endpoint_starships = 'https://swapi.dev/api/starships';
+const endpoint_films = 'https://swapi.dev/api/films';
+const results_wrap = document.getElementById("results_wrap");
+
+const fetch_species = () => {
+  results_wrap.innerHTML = '';
+  fetch(endpoint_species)
+    .then(response => response.json())
+//data.results is used because this is the array that is returned from the API of all the species and their data. so from that I need to take just the name of the species, so data.results.name
+    .then(data => data.results.forEach(species => {
+        const species_div = document.createElement("div");
+        btn_blank.innerText = 'species'
+        species_div.innerHTML = `${species.name}`; //notice the the quotes are back quotes `` and not regular '', that is why you can put a variable htere with the $ sign.
+        results_wrap.appendChild(species_div);
+
+        species_div.classList.add("categories");
+
+
+        species_div.addEventListener('click', ()=>
+            {moreData(species)
+        });
+    }))    
+    .catch(error => console.log('error'))
+};
+
+
+// with variable species written here in moreDat(species) and written above in the forEach loop in the eventListener, now the local variable 'species' can be processed in this new function.
+    function moreData(species) {
+    const extended = document.getElementById('extended');
+
+    fetch(species.homeworld).then(results => results.json()).then(planet => {
+        console.log(planet.name);
+        extended.innerHTML = `
+       <strong><u>Name: ${species.name}</u></strong> <br>
+        Average height: ${species.average_height}cm <br>
+        Skin colors: ${species.skin_colors} <br>
+        Average lifespan: ${species.average_lifespan} years <br>
+        Language: ${species.language} <br>
+        Home planet: ${planet.name}
+    `;
+    })
+    .catch(planet => {
+        extended.innerHTML = `
+       <strong><u>Name: ${species.name}</u></strong> <br>
+        Average height: ${species.average_height}cm <br>
+        Skin colors: ${species.skin_colors} <br>
+        Average lifespan: ${species.average_lifespan} years <br>
+        Language: ${species.language} <br>
+        Home planet: Unknown
+    `;
+    });
+    }
+
+    const fetch_starships = () => {
+        results_wrap.innerHTML = '';
+  fetch(endpoint_starships)
+    .then(response => response.json())
+//data.results is used because this is the array that is returned from the API of all the species and their data. so from that I need to take just the name of the species, so data.results.name
+    .then(data => data.results.forEach(starship => {
+        const starship_div = document.createElement("div");
+        btn_blank.innerText = 'starship'
+        starship_div.innerHTML = `${starship.name}`; //notice the the quotes are back quotes `` and not regular '', that is why you can put a variable htere with the $ sign.
+        const results_wrap = document.getElementById("results_wrap");
+        results_wrap.appendChild(starship_div);
+
+        starship_div.classList.add("categories");
+
+
+        starship_div.addEventListener('click', ()=>
+            {moreDataShips(starship)
+        });
+    }))    
+    .catch(error => console.log('error'))
+};
+
+function moreDataShips(starship) {
+    const extended = document.getElementById('extended');
+    extended.innerHTML = `
+    <strong><u>Name: ${starship.name}</u></strong> <br>
+    Model: ${starship.model} <br>
+    Cost: ${starship.cost_in_credits} credits <br>
+    Max speed: ${starship.max_atmosphering_speed} <br>
+    Hyperdrive rating: ${starship.hyperdrive_rating} <br>
+    Class: ${starship.starship_class}<br>
+    Length: ${starship.length}<br>
+    Crew: ${starship.crew}
+`;
+}
+
+
+const fetch_films = () => {
+        results_wrap.innerHTML = '';
+  fetch(endpoint_films)
+    .then(response => response.json())
+//data.results is used because this is the array that is returned from the API of all the species and their data. so from that I need to take just the name of the species, so data.results.name
+    .then(data => data.results.forEach(film => {
+        const film_div = document.createElement("div");
+        btn_blank.innerText = 'film'
+        film_div.innerHTML = `${film.title}`; //notice the the quotes are back quotes `` and not regular '', that is why you can put a variable htere with the $ sign.
+        const results_wrap = document.getElementById("results_wrap");
+        results_wrap.appendChild(film_div);
+
+        film_div.classList.add("categories");
+
+
+        film_div.addEventListener('click', ()=>
+            {moreDataFilm(film)
+        });
+    }))    
+    .catch(error => console.log('error'))
+};
+
+function moreDataFilm(film) {
+    const extended = document.getElementById('extended');
+    extended.innerHTML = `
+    <strong><u>Name: ${film.title}</u></strong> <br>
+    Chronological order: ${film.episode_id} <br>
+    Release date: ${film.release_date} <br>
+    Director: ${film.director} years <br>
+    Producer: ${film.producer} <br>
+    Characters featured: ${film.characters.length}<br>
+
+`;
+}
+
+</script>
+</body>
+</html>
