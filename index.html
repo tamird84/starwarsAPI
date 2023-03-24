@@ -26,6 +26,16 @@
             min-width: 40px;
             max-width: 260px;
             color: blue;
+            transition: 300ms all ease-in;
+            animation-duration: 300ms;
+        }
+
+        .categories:hover {
+            font-size: 23px;
+
+        }
+        .categories:active{
+            animation-name: shake;
         }
 
         .wrap_btns {
@@ -33,14 +43,18 @@
         }
 
         button {
+            background-color: beige;
             margin: 0 20px;
             width: 150px;
             height: 30px;
+            font-size: 18px;
+            border-radius: 10%;
+            box-shadow: 0px 2px 2px red;
         }
 
         #results_wrap {
             display: inline-block;
-            width: 300px;
+            width: 350px;
             margin: 15px;
             margin-left: 17%;
             border: 1px solid black;
@@ -49,6 +63,7 @@
             background-color: rgba(240, 255, 255, 0.614);
             text-shadow: 1px 2px 1px rgb(248, 244, 244);
             font-size: larger;
+            border-radius: 8px;
         }
 
         #extended {
@@ -62,6 +77,16 @@
             line-height: 30px;
             background-color: rgba(240, 255, 255, 0.614);
             font-size: larger;
+            border-radius: 8px;
+        }
+
+        @keyframes shake {
+            0% {transform: translateX(-2px);}
+            20% {transform: translateX(4px);}
+            40% {transform: translateX(-2px);}
+            60% {transform: translateX(4px);}
+            80% {transform: translateX(-2px);}
+            100% {transform: translateX(4px);}
         }
     </style>
 </head>
@@ -76,7 +101,7 @@
         <div>those are the <span id="btn_blank">______</span> in all the Star Wars movies:</div>
     </div> 
 
-    <div id="extended"></div>
+    <div id="extended">Click on any entry in the left box to get more information on it</div>
 
 <script>
 
@@ -87,13 +112,12 @@ const endpoint_films = 'https://swapi.dev/api/films';
 const results_wrap = document.getElementById("results_wrap");
 
 const fetch_species = () => {
-  results_wrap.innerHTML = '';
+  results_wrap.innerHTML = '<div>those are the species in all the Star Wars movies:</div>';
   fetch(endpoint_species)
     .then(response => response.json())
 //data.results is used because this is the array that is returned from the API of all the species and their data. so from that I need to take just the name of the species, so data.results.name
     .then(data => data.results.forEach(species => {
         const species_div = document.createElement("div");
-        btn_blank.innerText = 'species'
         species_div.innerHTML = `${species.name}`; //notice the the quotes are back quotes `` and not regular '', that is why you can put a variable htere with the $ sign.
         results_wrap.appendChild(species_div);
 
@@ -136,7 +160,7 @@ const fetch_species = () => {
     }
 
     const fetch_starships = () => {
-        results_wrap.innerHTML = '';
+        results_wrap.innerHTML = '<div>those are the starships in all the Star Wars movies:</div>';
   fetch(endpoint_starships)
     .then(response => response.json())
 //data.results is used because this is the array that is returned from the API of all the species and their data. so from that I need to take just the name of the species, so data.results.name
@@ -173,7 +197,7 @@ function moreDataShips(starship) {
 
 
 const fetch_films = () => {
-        results_wrap.innerHTML = '';
+        results_wrap.innerHTML = '<div>those are all the Star Wars films</div>';
   fetch(endpoint_films)
     .then(response => response.json())
 //data.results is used because this is the array that is returned from the API of all the species and their data. so from that I need to take just the name of the species, so data.results.name
